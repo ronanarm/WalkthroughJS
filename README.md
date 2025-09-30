@@ -260,11 +260,15 @@ tour.isActive();        // Check if walkthrough is running
 
 ## 🌟 Examples
 
-Check out the [demo.html](demo.html) file for comprehensive examples of all features and configuration methods.
+Check out the demo files for comprehensive examples of all features and configuration methods.
+- [demo-quickstart.html](/src/demo-quickstart.html)
+- [demo-attributes.html](/src/demo-attributes.html)
+- [demo-json.html](/src/demo-json.html)
+- [demo-custom-template.html](/src/demo-custom-template.html)
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE) file for details.
+MIT License - see [LICENSE](LICENSE.md) file for details.
 
 ## 🤝 Contributing
 
