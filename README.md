@@ -20,8 +20,19 @@ Create beautiful, interactive tutorials and onboarding experiences for your web 
 
 ### 1\. Include the Library
 
+#### A\. Local
 ```html
 <script src="walkthrough.js"></script>  
+```
+
+#### B\. UNPKG CDN
+```html
+<script src="https://unpkg.com/@ronanarm/walkthroughjs@latest"></script>  
+```
+
+#### C\. Local
+```bash
+npm install @ronanarm/walkthroughjs
 ```
 
 ### 2\. Add Data Attributes (Easiest Method)
