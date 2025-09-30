@@ -2,6 +2,8 @@
 
 Create beautiful, interactive tutorials and onboarding experiences for your web applications with zero dependencies.
 
+[Live Demo](https://ronanarm.github.io/WalkthroughJS/demo/)
+
 ![Walkthrough.js Demo](https://img.shields.io/badge/demo-live-brightgreen) ![Version](https://img.shields.io/badge/version-1.0.0-blue) ![License](https://img.shields.io/badge/license-LGPL-green)
 
 ## ✨ Features
