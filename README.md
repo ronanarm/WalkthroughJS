@@ -30,7 +30,12 @@ Create beautiful, interactive tutorials and onboarding experiences for your web 
 <script src="https://unpkg.com/@ronanarm/walkthroughjs@latest"></script>  
 ```
 
-#### C\. NPM
+#### C\. jsDelivr CDN
+```html
+<script src="https://cdn.jsdelivr.net/gh/ronanarm/WalkthroughJS@main/src/walkthrough.min.js"></script>  
+```
+
+#### D\. NPM (Preferred)
 ```bash
 npm install @ronanarm/walkthroughjs
 ```
