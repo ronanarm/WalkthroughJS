@@ -2,7 +2,7 @@
 
 Create beautiful, interactive tutorials and onboarding experiences for your web applications with zero dependencies.
 
-![Walkthrough.js Demo](https://img.shields.io/badge/demo-live-brightgreen) ![Version](https://img.shields.io/badge/version-1.0.0-blue) ![License](https://img.shields.io/badge/license-MIT-green)
+![Walkthrough.js Demo](https://img.shields.io/badge/demo-live-brightgreen) ![Version](https://img.shields.io/badge/version-1.0.0-blue) ![License](https://img.shields.io/badge/license-LGPL-green)
 
 ## ✨ Features
 
@@ -268,7 +268,7 @@ Check out the demo files for comprehensive examples of all features and configur
 
 ## 📄 License
 
-MIT License - see [LICENSE](LICENSE.md) file for details.
+LGPL License - see [LICENSE](LICENSE.md) file for details.
 
 ## 🤝 Contributing
 
