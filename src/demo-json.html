@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Walkthrough.js — JSON Configuration Demo</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin:0; padding:32px; line-height:1.5; }
+  header { margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
+  .card { border:1px solid #e5e7eb; border-radius:12px; padding:16px; }
+  .btn { display:inline-block; border:0; background:#6366f1; color:white; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; }
+  .btn.secondary { background:#0ea5e9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  code,kbd { background:#f3f4f6; padding:2px 6px; border-radius:6px; }
+  footer { margin-top:32px; color:#6b7280; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>JSON Configuration Demo</h1>
+  <p>Pass a config object to walkthrough.fromJSON({ steps, options, callbacks, templates }).</p>
+</header>
+
+<div class="grid">
+  <div class="card header">
+    <h3>Header Area</h3>
+    <p>Targeted in step 1 via <code>.header</code>.</p>
+  </div>
+  <div class="card left">
+    <h3>Sidebar</h3>
+    <p>Targeted in step 2 via <code>.left</code>.</p>
+  </div>
+  <div class="card content">
+    <h3>Main Content</h3>
+    <p>Targeted in step 3 via <code>.content</code>.</p>
+  </div>
+</div>
+
+<p style="margin-top:20px;">
+  <button class="btn" id="startJSON">Start JSON Tour</button>
+  <button class="btn secondary" id="resetJSON">Reset</button>
+</p>
+
+<script>
+  let jsonTour = null;
+  document.getElementById('startJSON').addEventListener('click', () => {
+    if (jsonTour) jsonTour.destroy();
+    jsonTour = walkthrough.fromJSON({
+      steps: [
+        { element: '.header', title: 'Header', text: 'A simple header block', position: 'bottom' },
+        { element: '.left', title: 'Sidebar', text: 'Secondary navigation lives here', position: 'right' },
+        { element: '.content', title: 'Main Content', text: 'The heart of your page', position: 'top' }
+      ],
+      options: {
+        progressColor: '#0ea5e9',
+        highlightPadding: 12,
+        animationDuration: 320
+      },
+      callbacks: {
+        onStart: () => console.log('[JSON] started'),
+        onStep: (step, i) => console.log('[JSON] step', i+1, step.title),
+        onFinish: () => console.log('[JSON] finished')
+      }
+    });
+    jsonTour.start();
+  });
+  document.getElementById('resetJSON').addEventListener('click', () => {
+    if (jsonTour) { jsonTour.destroy(); jsonTour = null; }
+  });
+</script>
+<footer>
+  Walkthrough.js demo — open the browser console to see callbacks & logs.
+</footer>
+<script src="walkthrough.js"></script>
+</body>
+</html>

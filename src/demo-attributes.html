@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Walkthrough.js — HTML Data Attributes Demo</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin:0; padding:32px; line-height:1.5; }
+  header { margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
+  .card { border:1px solid #e5e7eb; border-radius:12px; padding:16px; }
+  .btn { display:inline-block; border:0; background:#6366f1; color:white; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; }
+  .btn.secondary { background:#0ea5e9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  code,kbd { background:#f3f4f6; padding:2px 6px; border-radius:6px; }
+  footer { margin-top:32px; color:#6b7280; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>HTML Data Attributes Demo</h1>
+  <p>Add data-wt-* attributes to elements and start via walkthrough.fromAttributes().</p>
+</header>
+
+<div class="grid">
+  <div class="card" data-wt-step="1" data-wt-title="Welcome!" data-wt-text="This card is step 1" data-wt-position="bottom">
+    <h3>Card One</h3>
+    <p>Tagged with <code>data-wt-step="1"</code></p>
+  </div>
+  <div class="card" data-wt-step="2" data-wt-title="Another Step" data-wt-text="This is step 2" data-wt-position="right">
+    <h3>Card Two</h3>
+    <p>Tagged with <code>data-wt-step="2"</code></p>
+  </div>
+  <div class="card" data-wt-step="3" data-wt-title="Final Step" data-wt-text="Finish the tour here" data-wt-position="top">
+    <h3>Card Three</h3>
+    <p>Tagged with <code>data-wt-step="3"</code></p>
+  </div>
+</div>
+
+<p style="margin-top:20px;">
+  <button class="btn" id="startAttr">Start Tour</button>
+  <button class="btn secondary" id="resetAttr">Reset</button>
+</p>
+
+<script>
+  let tour = null;
+  document.getElementById('startAttr').addEventListener('click', () => {
+    if (tour) tour.destroy();
+    tour = walkthrough.fromAttributes({
+      progressColor: '#6366f1',
+      rememberProgress: false,
+      callbacks: {
+        onStart: () => console.log('[ATTR] started'),
+        onFinish: () => console.log('[ATTR] finished')
+      }
+    });
+    tour.start();
+  });
+  document.getElementById('resetAttr').addEventListener('click', () => {
+    if (tour) { tour.destroy(); tour = null; }
+  });
+</script>
+<footer>
+  Walkthrough.js demo — open the browser console to see callbacks & logs.
+</footer>
+<script src="walkthrough.js"></script>
+</body>
+</html>

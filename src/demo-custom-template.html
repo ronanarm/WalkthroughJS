@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Walkthrough.js — Custom Template Demo</title>
+<style>
+  body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; margin:0; padding:32px; line-height:1.5; }
+  header { margin-bottom:24px; }
+  .grid { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap:16px; }
+  .card { border:1px solid #e5e7eb; border-radius:12px; padding:16px; }
+  .btn { display:inline-block; border:0; background:#6366f1; color:white; padding:10px 16px; border-radius:8px; cursor:pointer; font-weight:600; }
+  .btn.secondary { background:#0ea5e9; }
+  .btn:disabled { opacity:.5; cursor:not-allowed; }
+  code,kbd { background:#f3f4f6; padding:2px 6px; border-radius:6px; }
+  footer { margin-top:32px; color:#6b7280; font-size:14px; }
+</style>
+</head>
+<body>
+<header>
+  <h1>Custom Template Demo</h1>
+  <p>Provide a templates.popup(step, index, total) function for full control of markup.</p>
+</header>
+
+<div class="grid">
+  <div class="card ct-1"><h3>Customizable Area</h3><p>First target</p></div>
+  <div class="card ct-2"><h3>Another Zone</h3><p>Second target</p></div>
+  <div class="card ct-3"><h3>Finish Here</h3><p>Third target</p></div>
+</div>
+
+<p style="margin-top:20px;">
+  <button class="btn" id="startCustom">Start Custom Template Tour</button>
+  <button class="btn secondary" id="resetCustom">Reset</button>
+</p>
+
+<style>
+  .my-popup { background:#fff7ed; border:2px solid #fb923c; border-radius:12px; max-width:340px; }
+  .my-popup .hd { padding:16px; border-bottom:1px dashed #fdba74; display:flex; align-items:center; gap:8px; }
+  .my-popup .hd .dot { width:10px; height:10px; background:#fb923c; border-radius:9999px; }
+  .my-popup .bd { padding:16px; color:#3f3f46; }
+  .my-popup .ft { padding:12px 16px; display:flex; justify-content:space-between; gap:8px; }
+  .my-btn { background:#fb923c; color:white; border:0; padding:8px 12px; border-radius:8px; cursor:pointer; font-weight:700; }
+  .my-btn.secondary { background:#e5e7eb; color:#111827; }
+</style>
+
+<script>
+  let customTour = null;
+  document.getElementById('startCustom').addEventListener('click', () => {
+    if (customTour) customTour.destroy();
+    customTour = walkthrough.fromJSON({
+      steps: [
+        { element: '.ct-1', title: '🎨 Custom Layout', text: 'This popup is fully custom', position: 'bottom' },
+        { element: '.ct-2', title: '🔧 Your Controls', text: 'Back/Next wired to tour methods', position: 'right' },
+        { element: '.ct-3', title: '✅ Finish', text: 'Close out with style', position: 'top' }
+      ],
+      templates: {
+        popup: (step, index, total) => {
+          const isLast = index === total - 1;
+          return `
+            <div class="my-popup">
+              <div class="hd"><span class="dot"></span><strong>${step.title||''}</strong><span style="margin-left:auto;font-size:12px;">${index+1}/${total}</span></div>
+              <div class="bd"><p>${step.text||''}</p></div>
+              <div class="ft">
+                ${index>0 ? '<button class="my-btn secondary" data-wt-action="prev">Back</button>' : '<span></span>'}
+                <button class="my-btn" data-wt-action="${isLast ? 'finish' : 'next'}">${isLast ? 'Finish' : 'Next'}</button>
+              </div>
+            </div>
+          `;
+        }
+      },
+      options: { progressColor: '#fb923c', highlightPadding: 14 },
+      callbacks: {
+        onStart: () => console.log('[CUSTOM] started'),
+        onFinish: () => console.log('[CUSTOM] finished')
+      }
+    });
+    customTour.start();
+  });
+  document.getElementById('resetCustom').addEventListener('click', () => {
+    if (customTour) { customTour.destroy(); customTour = null; }
+  });
+</script>
+<footer>
+  Walkthrough.js demo — open the browser console to see callbacks & logs.
+</footer>
+<script src="walkthrough.js"></script>
+</body>
+</html>
