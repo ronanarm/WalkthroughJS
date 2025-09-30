@@ -30,7 +30,7 @@ Create beautiful, interactive tutorials and onboarding experiences for your web 
 <script src="https://unpkg.com/@ronanarm/walkthroughjs@latest"></script>  
 ```
 
-#### C\. Local
+#### C\. NPM
 ```bash
 npm install @ronanarm/walkthroughjs
 ```
