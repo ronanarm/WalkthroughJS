@@ -1,13 +1,15 @@
-# Walkthrough.js
+# WalkthroughJS - TypeScript Edition
 
-Create beautiful, interactive tutorials and onboarding experiences for your web applications with zero dependencies.
+Create beautiful, interactive tutorials and onboarding experiences for your web applications with zero dependencies. Now fully rewritten in TypeScript with modern tooling!
 
-[Live Demo](https://ronanarm.github.io/WalkthroughJS/demo/)
-
-![Walkthrough.js Demo](https://img.shields.io/badge/demo-live-brightgreen) ![Version](https://img.shields.io/badge/version-1.0.0-blue) ![License](https://img.shields.io/badge/license-LGPL-green)
+[![npm version](https://img.shields.io/npm/v/@walkthroughjs/core.svg)](https://www.npmjs.com/package/@walkthroughjs/core)
+[![License: LGPL v3](https://img.shields.io/badge/License-LGPL%20v3-blue.svg)](https://www.gnu.org/licenses/lgpl-3.0)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5.3-blue)](https://www.typescriptlang.org/)
 
 ## ✨ Features
 
+- **🔷 TypeScript First** - Full type safety and IntelliSense support
+- **📦 Modern Build** - ESM and CJS support with tsup
 - **🎨 Beautiful Design** - Modern, polished UI with smooth animations
 - **⌨️ Keyboard Navigation** - Full support for arrow keys, Enter, and Escape
 - **📱 Responsive** - Works perfectly on all screen sizes and devices
@@ -17,282 +19,277 @@ Create beautiful, interactive tutorials and onboarding experiences for your web 
 - **🎨 Customizable** - Colors, positions, templates, and styling options
 - **⚡ Multiple Setup Methods** - HTML attributes, JSON config, or quick start
 - **🧩 Custom Templates** - Complete control over popup HTML structure
+- **0️⃣ Zero Dependencies** - Lightweight and fast
+
+## 📦 Installation
+
+### NPM (Recommended)
+
+```bash
+npm install @walkthroughjs/core
+```
+
+### Yarn
+
+```bash
+yarn add @walkthroughjs/core
+```
+
+### PNPM
+
+```bash
+pnpm add @walkthroughjs/core
+```
 
 ## 🚀 Quick Start
 
-### 1\. Include the Library
+### TypeScript/JavaScript Module
 
-#### A\. Local
-```html
-<script src="walkthrough.js"></script>  
+```typescript
+import { walkthrough } from '@walkthroughjs/core';
+
+// Quick start method
+walkthrough.start([
+  {
+    element: '.welcome-section',
+    title: 'Welcome! 👋',
+    text: 'Let me show you around.',
+    position: 'bottom'
+  },
+  {
+    element: '#main-button',
+    title: 'Main Action',
+    text: 'Click here to get started.',
+    position: 'top'
+  }
+]);
 ```
 
-#### B\. UNPKG CDN
-```html
-<script src="https://unpkg.com/@ronanarm/walkthroughjs@latest"></script>  
+### Using TypeScript Class
+
+```typescript
+import { Walkthrough, WalkthroughOptions } from '@walkthroughjs/core';
+
+const options: WalkthroughOptions = {
+  progressColor: '#667eea',
+  showProgress: true,
+  rememberProgress: true
+};
+
+const tour = new Walkthrough(options);
+
+tour.configure({
+  steps: [
+    {
+      element: '.feature-1',
+      title: 'Feature 1',
+      text: 'This is an amazing feature.'
+    }
+  ],
+  callbacks: {
+    onStart: () => console.log('Tour started!'),
+    onFinish: () => console.log('Tour completed!')
+  }
+});
+
+tour.start();
 ```
 
-#### C\. jsDelivr CDN
+### HTML Attributes Method
+
 ```html
-<script src="https://cdn.jsdelivr.net/gh/ronanarm/WalkthroughJS@main/src/walkthrough.min.js"></script>  
+<div data-wt-step="1"
+     data-wt-title="Welcome!"
+     data-wt-text="This is your first step."
+     data-wt-position="bottom">
+  Content to highlight
+</div>
+
+<button data-wt-step="2"
+        data-wt-title="Click Here"
+        data-wt-text="This button does something important.">
+  Action Button
+</button>
+
+<script type="module">
+  import { walkthrough } from '@walkthroughjs/core';
+  
+  const tour = walkthrough.fromAttributes();
+  tour.start();
+</script>
 ```
 
-#### D\. NPM (Preferred)
+## 📚 API Reference
+
+### `walkthrough.start(steps, options?)`
+
+Quick start method to create and start a walkthrough immediately.
+
+```typescript
+walkthrough.start([
+  { element: '.header', title: 'Header', text: 'This is the header' }
+], { 
+  progressColor: '#28a745',
+  showProgress: true
+});
+```
+
+### `walkthrough.fromAttributes(options?)`
+
+Creates a walkthrough from HTML data attributes.
+
+```typescript
+const tour = walkthrough.fromAttributes({
+  progressColor: '#667eea',
+  rememberProgress: false
+});
+tour.start();
+```
+
+### `walkthrough.fromJSON(config)`
+
+Creates a walkthrough from a JSON configuration object.
+
+```typescript
+const tour = walkthrough.fromJSON({
+  steps: [...],
+  options: {...},
+  callbacks: {...}
+});
+tour.start();
+```
+
+### Configuration Options
+
+```typescript
+interface WalkthroughOptions {
+  // Visual
+  overlayColor?: string;           // Default: 'rgba(0, 0, 0, 0.5)'
+  highlightPadding?: number;       // Default: 10
+  animationDuration?: number;      // Default: 300
+  progressColor?: string;          // Default: '#4CAF50'
+  
+  // Progress
+  showProgress?: boolean;          // Default: true
+  
+  // Buttons
+  showButtons?: boolean;           // Default: true
+  showSkip?: boolean;              // Default: true
+  skipText?: string;               // Default: 'Skip'
+  prevText?: string;               // Default: '← Previous'
+  nextText?: string;               // Default: 'Next →'
+  finishText?: string;             // Default: 'Finish'
+  
+  // Keyboard
+  keyboard?: boolean;              // Default: true
+  escapeToExit?: boolean;          // Default: true
+  arrowNavigation?: boolean;       // Default: true
+  
+  // Storage
+  rememberProgress?: boolean;      // Default: false
+  cookieName?: string;             // Default: 'walkthrough_progress'
+  
+  // Behavior
+  closeOnOverlay?: boolean;        // Default: true
+  autoStart?: boolean;             // Default: false
+}
+```
+
+### Step Configuration
+
+```typescript
+interface WalkthroughStep {
+  element: string | HTMLElement;   // Target element
+  title?: string;                  // Step title
+  text?: string;                   // Step description
+  position?: 'top' | 'bottom' | 'left' | 'right';  // Popup position
+}
+```
+
+### Callbacks
+
+```typescript
+tour.configure({
+  callbacks: {
+    onStart: () => console.log('Started'),
+    onStep: (step, index) => console.log(`Step ${index}`),
+    onFinish: () => console.log('Finished'),
+    onEnd: () => console.log('Ended')
+  }
+});
+```
+
+### Methods
+
+```typescript
+const tour = new Walkthrough();
+
+tour.start();           // Start the walkthrough
+tour.next();            // Go to next step
+tour.prev();            // Go to previous step
+tour.finish();          // Finish the walkthrough
+tour.end();             // End/close the walkthrough
+tour.destroy();         // Clean up and remove all elements
+```
+
+## 🎨 Customization
+
+### Custom Colors
+
+```typescript
+const tour = new Walkthrough({
+  progressColor: '#667eea',
+  overlayColor: 'rgba(0, 0, 0, 0.7)'
+});
+```
+
+### Custom Templates
+
+```typescript
+tour.configure({
+  templates: {
+    popup: (step, index, total) => `
+      <div class="custom-popup">
+        <h2>${step.title}</h2>
+        <p>${step.text}</p>
+        <div>Step ${index + 1} of ${total}</div>
+      </div>
+    `
+  }
+});
+```
+
+## 🔧 Development
+
 ```bash
-npm install @ronanarm/walkthroughjs
+# Install dependencies
+npm install
+
+# Development mode (watch)
+npm run dev
+
+# Build for production
+npm run build
+
+# Lint
+npm run lint
+
+# Format code
+npm run format
+
+# Type check
+npm run type-check
 ```
 
-### 2\. Add Data Attributes (Easiest Method)
+## 📝 License
 
-```HTML
-<div data-wt-step="1"   
-     data-wt-title="Welcome!"   
-     data-wt-text="This is your first step."   
-     data-wt-position="bottom">  
-  Content to highlight  
-</div>  
-  
-<button data-wt-step="2"   
-        data-wt-title="Click Here"   
-        data-wt-text="This button does something important.">  
-  Action Button  
-</button>  
-```
-
-### 3\. Start the Walkthrough
-
-```javascript
-// Start from HTML attributes  
-const tour = walkthrough.fromAttributes();  
-tour.start();  
-  
-// Or use the quick start method  
-walkthrough.start([  
-  {  
-    element: '.my-element',  
-    title: 'Step 1',  
-    text: 'This is the first step',  
-    position: 'bottom'  
-  },  
-  {  
-    element: '#my-button',  
-    title: 'Step 2',   
-    text: 'Click this button to continue',  
-    position: 'top'  
-  }  
-]);  
-```
-
-## 📖 Usage Methods
-
-### Method 1: HTML Data Attributes
-
-The simplest way to add walkthroughs. Just add data attributes to your HTML elements:
-
-```HTML
-<div data-wt-step="1"   
-     data-wt-title="Welcome"   
-     data-wt-text="This is your dashboard"   
-     data-wt-position="bottom">  
-  Dashboard Content  
-</div>  
-  
-<script>  
-const tour = walkthrough.fromAttributes({  
-  progressColor: '#667eea',  
-  rememberProgress: true  
-});  
-tour.start();  
-</script>  
-```
-
-### Method 2: JSON Configuration
-
-Use JavaScript objects for programmatic control:
-
-```javascript
-const tour = walkthrough.fromJSON({  
-  steps: [  
-    {  
-      element: '.header',  
-      title: 'Navigation',  
-      text: 'This is your main navigation area',  
-      position: 'bottom'  
-    },  
-    {  
-      element: '#sidebar',  
-      title: 'Sidebar',  
-      text: 'Access tools and settings here',  
-      position: 'right',  
-      nextText: 'Got it! →'  
-    }  
-  ],  
-  options: {  
-    progressColor: '#764ba2',  
-    highlightPadding: 15,  
-    animationDuration: 400  
-  },  
-  callbacks: {  
-    onStart: () => console.log('Tour started'),  
-    onFinish: () => console.log('Tour completed')  
-  }  
-});  
-  
-tour.start();  
-```
-
-### Method 3: Quick Start
-
-Perfect for rapid prototyping:
-
-```javascript
-walkthrough.start([  
-  {  
-    element: '.feature',  
-    title: 'New Feature',  
-    text: 'Check out this new feature!',  
-    position: 'bottom'  
-  }  
-], {  
-  progressColor: '#28a745',  
-  onFinish: () => alert('Tour complete!')  
-});  
-```
-
-## 🎛️ Configuration Options
-
-| Option | Type | Default | Description |
-|--------|------|---------|-------------|
-| `progressColor` | string | `'#007bff'` | Color of the progress indicator |
-| `highlightPadding` | number | `10` | Padding around highlighted elements |
-| `animationDuration` | number | `300` | Animation duration in milliseconds |
-| `rememberProgress` | boolean | `true` | Remember user's progress in localStorage |
-| `showProgress` | boolean | `true` | Show step progress indicator |
-| `allowClose` | boolean | `true` | Allow users to close the walkthrough |
-| `backdrop` | boolean | `true` | Show backdrop overlay |
-| `backdropColor` | string | `'rgba(0,0,0,0.5)'` | Backdrop overlay color |
-
-## 📍 Position Options
-
-- `'top'` - Above the element
-- `'bottom'` - Below the element
-- `'left'` - To the left of the element
-- `'right'` - To the right of the element
-- `'center'` - Centered on screen
-
-## 🎨 Custom Templates
-
-Take full control of the popup HTML:
-
-```javascript
-const tour = walkthrough.fromJSON({  
-  steps: [...],  
-  templates: {  
-    popup: (step, index, total) => {  
-      const isLast = index === total - 1;  
-      return `  
-        <div class="my-custom-popup">  
-          <h2>${step.title}</h2>  
-          <p>${step.text}</p>  
-          <div class="buttons">  
-            ${index > 0 ? `<button onclick="currentWalkthrough.prev()">Back</button>` : ''}  
-            <button onclick="currentWalkthrough.${isLast ? 'finish' : 'next'}()">  
-              ${isLast ? 'Finish' : 'Next'}  
-            </button>  
-          </div>  
-        </div>  
-      `;  
-    }  
-  }  
-});  
-```
-
-## 🔌 Event Callbacks
-
-```javascript
-const tour = walkthrough.fromJSON({  
-  steps: [...],  
-  callbacks: {  
-    onStart: () => {  
-      console.log('Walkthrough started');  
-    },  
-    onStep: (step, index) => {  
-      console.log(`Now on step ${index + 1}: ${step.title}`);  
-    },  
-    onNext: (step, index) => {  
-      console.log('Moving to next step');  
-    },  
-    onPrev: (step, index) => {  
-      console.log('Moving to previous step');  
-    },  
-    onFinish: () => {  
-      console.log('Walkthrough completed');  
-    },  
-    onClose: () => {  
-      console.log('Walkthrough closed');  
-    }  
-  }  
-});  
-```
-
-## 🎮 API Methods
-
-```javascript
-	const tour = walkthrough.fromJSON({...});  
-  
-// Control methods  
-tour.start();           // Start the walkthrough  
-tour.next();            // Go to next step  
-tour.prev();            // Go to previous step  
-tour.goTo(stepIndex);   // Jump to specific step  
-tour.finish();          // Complete the walkthrough  
-tour.close();           // Close without completing  
-tour.destroy();         // Clean up and remove  
-  
-// State methods  
-tour.getCurrentStep();  // Get current step object  
-tour.getCurrentIndex(); // Get current step index  
-tour.getTotalSteps();   // Get total number of steps  
-tour.isActive();        // Check if walkthrough is running  
-```
-
-## ⌨️ Keyboard Navigation
-
-- **→ / ↓** - Next step
-- **← / ↑** - Previous step
-- **Enter** - Next step
-- **Escape** - Close walkthrough
-- **Home** - Go to first step
-- **End** - Go to last step
-
-## 🎯 HTML Data Attributes Reference
-
-| Attribute | Description | Example |
-|-----------|-------------|---------|
-| `data-wt-step` | Step number (required) | `data-wt-step="1"` |
-| `data-wt-title` | Step title | `data-wt-title="Welcome"` |
-| `data-wt-text` | Step description | `data-wt-text="This is the main menu"` |
-| `data-wt-position` | Popup position | `data-wt-position="bottom"` |
-| `data-wt-next-text` | Custom next button text | `data-wt-next-text="Continue →"` |
-| `data-wt-prev-text` | Custom previous button text | `data-wt-prev-text="← Back"` |
-
-## 🌟 Examples
-
-Check out the demo files for comprehensive examples of all features and configuration methods.
-- [demo-quickstart.html](/src/demo-quickstart.html)
-- [demo-attributes.html](/src/demo-attributes.html)
-- [demo-json.html](/src/demo-json.html)
-- [demo-custom-template.html](/src/demo-custom-template.html)
-
-## 📄 License
-
-LGPL License - see [LICENSE](LICENSE.md) file for details.
+LGPL-3.0-or-later
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please read our [Contributing Guide](CONTRIBUTING.md) for details.
+Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for details.
 
-## 📞 Support
+## 🙏 Credits
 
-- 🐛 Issues: [GitHub Issues](https://github.com/yourusername/walkthrough-js/issues)
-- 💬 Discussions: [GitHub Discussions](https://github.com/yourusername/walkthrough-js/discussions)
+Originally created by Ronan Armstrong, rebuilt in TypeScript by Benjamin Rast.
+
