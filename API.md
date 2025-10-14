@@ -1,365 +1,443 @@
-# Walkthrough.js API Reference
+# WalkthroughJS TypeScript API Reference
 
-Complete API documentation for Walkthrough.js library.
+Complete TypeScript API documentation for WalkthroughJS library.
 
 ## Table of Contents
 
-- [Core Methods](#core-methods)
-- [Configuration Objects](#configuration-objects)
-- [Step Objects](#step-objects)
-- [Template Functions](#template-functions)
-- [Event Callbacks](#event-callbacks)
-- [Utility Methods](#utility-methods)
+- [Core Classes](#core-classes)
+- [Types & Interfaces](#types--interfaces)
+- [Configuration](#configuration)
+- [Methods](#methods)
+- [Callbacks](#callbacks)
+- [Utilities](#utilities)
 
-## Core Methods
+## Core Classes
 
-### `walkthrough.fromAttributes(options?)`
+### `Walkthrough`
 
-Creates a walkthrough from HTML data attributes.
+Main class for creating and managing walkthroughs.
 
-**Parameters:**
+```typescript
+import { Walkthrough, WalkthroughOptions } from '@walkthroughjs/core';
 
-- `options` (Object, optional) - Configuration options
+const options: WalkthroughOptions = {
+  progressColor: '#4CAF50',
+  showProgress: true
+};
 
-**Returns:** Walkthrough instance
-
-**Example:**
-
-```javascript
-const tour = walkthrough.fromAttributes({  
-  progressColor: '#667eea',  
-  rememberProgress: false  
-});  
+const tour = new Walkthrough(options);
 ```
 
-### `walkthrough.fromJSON(config)`
+## Types & Interfaces
 
-Creates a walkthrough from a JSON configuration object.
+### `WalkthroughOptions`
 
-**Parameters:**
+Complete configuration options interface.
 
-- `config` (Object) - Complete configuration object
+```typescript
+interface WalkthroughOptions {
+  // Visual
+  overlayColor?: string;
+  highlightPadding?: number;
+  animationDuration?: number;
+  scrollDuration?: number;
+  scrollOffset?: number;
+  zIndex?: number;
 
-**Returns:** Walkthrough instance
+  // Popup configuration
+  popupWidth?: number;
+  popupOffset?: number;
+  popupClass?: string;
 
-**Example:**
+  // Progress
+  showProgress?: boolean;
+  progressColor?: string;
 
-```javascript
-const tour = walkthrough.fromJSON({  
-  steps: [...],  
-  options: {...},  
-  callbacks: {...}  
-});  
+  // Buttons
+  showButtons?: boolean;
+  showSkip?: boolean;
+  skipText?: string;
+  prevText?: string;
+  nextText?: string;
+  finishText?: string;
+
+  // Keyboard navigation
+  keyboard?: boolean;
+  escapeToExit?: boolean;
+  arrowNavigation?: boolean;
+
+  // Storage
+  cookieName?: string;
+  cookieExpiry?: number;
+  rememberProgress?: boolean;
+
+  // Behavior
+  closeOnOverlay?: boolean;
+  autoStart?: boolean;
+  startDelay?: number;
+
+  // Attribute names for HTML config
+  attributePrefix?: string;
+  stepAttribute?: string;
+  titleAttribute?: string;
+  textAttribute?: string;
+  positionAttribute?: string;
+}
 ```
 
-### `walkthrough.start(steps, options?)`
+### `WalkthroughStep`
 
-Quick start method to create and start a walkthrough immediately.
+Step configuration interface.
 
-**Parameters:**
-
-- `steps` (Array) - Array of step objects
-- `options` (Object, optional) - Configuration options
-
-**Returns:** Walkthrough instance
-
-**Example:**
-
-```javascript
-const tour = walkthrough.start([  
-  { element: '.header', title: 'Header', text: 'This is the header' }  
-], { progressColor: '#28a745' });  
+```typescript
+interface WalkthroughStep {
+  element: string | HTMLElement;
+  title?: string;
+  text?: string;
+  position?: PopupPosition;
+  step?: number;
+  skipText?: string;
+  prevText?: string;
+  nextText?: string;
+  finishText?: string;
+}
 ```
 
-## Configuration Objects
+### `PopupPosition`
 
-### Options Object
+Valid popup positions.
 
-```javascript
-{  
-  // Visual options  
-  progressColor: '#007bff',        // Progress indicator color  
-  highlightPadding: 10,            // Padding around highlighted elements  
-  animationDuration: 300,          // Animation duration (ms)  
-  backdrop: true,                  // Show backdrop overlay  
-  backdropColor: 'rgba(0,0,0,0.5)', // Backdrop color  
+```typescript
+type PopupPosition = 'top' | 'bottom' | 'left' | 'right';
+```
+
+### `WalkthroughCallbacks`
+
+Event callback functions.
+
+```typescript
+interface WalkthroughCallbacks {
+  onStart?: () => void;
+  onStep?: (step: WalkthroughStep, index: number) => void;
+  onFinish?: () => void;
+  onEnd?: () => void;
+}
+```
+
+### `WalkthroughTemplates`
+
+Custom template functions.
+
+```typescript
+interface WalkthroughTemplates {
+  popup?: (step: WalkthroughStep, index: number, totalSteps: number) => string;
+}
+```
+
+### `WalkthroughConfig`
+
+Complete configuration object.
+
+```typescript
+interface WalkthroughConfig {
+  steps?: WalkthroughStep[];
+  options?: WalkthroughOptions;
+  callbacks?: WalkthroughCallbacks;
+  templates?: WalkthroughTemplates;
+}
+```
+
+## Configuration
+
+### Using the Constructor
+
+```typescript
+const tour = new Walkthrough({
+  progressColor: '#667eea',
+  showProgress: true,
+  keyboard: true,
+  rememberProgress: true
+});
+```
+
+### Using `configure()` Method
+
+```typescript
+tour.configure({
+  steps: [
+    { element: '.step-1', title: 'Step 1', text: 'First step' },
+    { element: '.step-2', title: 'Step 2', text: 'Second step' }
+  ],
+  options: {
+    progressColor: '#28a745'
+  },
+  callbacks: {
+    onStart: () => console.log('Started'),
+    onFinish: () => console.log('Finished')
+  }
+});
+```
+
+## Methods
+
+### Instance Methods
+
+#### `start(stepIndex?: number | null): void`
+
+Start the walkthrough from a specific step (or from the beginning).
+
+```typescript
+tour.start();      // Start from beginning
+tour.start(2);     // Start from step 2 (0-indexed)
+```
+
+#### `next(): void`
+
+Navigate to the next step.
+
+```typescript
+tour.next();
+```
+
+#### `prev(): void`
+
+Navigate to the previous step.
+
+```typescript
+tour.prev();
+```
+
+#### `finish(): void`
+
+Complete the walkthrough normally.
+
+```typescript
+tour.finish();
+```
+
+#### `end(): void`
+
+End/close the walkthrough.
+
+```typescript
+tour.end();
+```
+
+#### `destroy(): void`
+
+Clean up and remove all walkthrough elements.
+
+```typescript
+tour.destroy();
+```
+
+#### `scanForAttributeSteps(): void`
+
+Scan the DOM for elements with walkthrough attributes.
+
+```typescript
+tour.scanForAttributeSteps();
+```
+
+#### `configure(config: WalkthroughConfig): void`
+
+Configure the walkthrough with steps, options, callbacks, and templates.
+
+```typescript
+tour.configure({
+  steps: [...],
+  options: {...},
+  callbacks: {...}
+});
+```
+
+### Static Helper Methods
+
+#### `walkthrough.start(steps, options?)`
+
+Quick start method.
+
+```typescript
+import { walkthrough } from '@walkthroughjs/core';
+
+walkthrough.start([
+  { element: '.header', title: 'Header' }
+], {
+  progressColor: '#667eea'
+});
+```
+
+#### `walkthrough.fromAttributes(options?)`
+
+Create from HTML attributes.
+
+```typescript
+const tour = walkthrough.fromAttributes({
+  progressColor: '#667eea'
+});
+```
+
+#### `walkthrough.fromJSON(config)`
+
+Create from JSON configuration.
+
+```typescript
+const tour = walkthrough.fromJSON({
+  steps: [...],
+  options: {...}
+});
+```
+
+## Callbacks
+
+### Event Lifecycle
+
+```typescript
+tour.configure({
+  callbacks: {
+    // Called when tour starts
+    onStart: () => {
+      console.log('Tour started!');
+    },
     
-  // Behavior options  
-  rememberProgress: true,          // Save progress to localStorage  
-  showProgress: true,              // Show step counter  
-  allowClose: true,                // Allow closing walkthrough  
-  autoStart: false,                // Start automatically  
+    // Called on each step
+    onStep: (step, index) => {
+      console.log(`Now on step ${index + 1}: ${step.title}`);
+      analytics.track('walkthrough_step', { step: index });
+    },
     
-  // Navigation options  
-  showButtons: true,               // Show next/prev buttons  
-  showSkip: true,                  // Show skip button  
-  keyboardNavigation: true,        // Enable keyboard controls  
+    // Called when tour finishes normally
+    onFinish: () => {
+      console.log('Tour completed!');
+      analytics.track('walkthrough_completed');
+    },
     
-  // Positioning  
-  defaultPosition: 'bottom',       // Default popup position  
-  offset: 10,                      // Distance from target element  
-    
-  // Text customization  
-  nextText: 'Next',               // Default next button text  
-  prevText: 'Previous',           // Default previous button text  
-  skipText: 'Skip',               // Skip button text  
-  finishText: 'Finish',           // Finish button text  
-  closeText: '×'                  // Close button text  
-}  
+    // Called when tour ends (finish or skip)
+    onEnd: () => {
+      console.log('Tour ended');
+    }
+  }
+});
 ```
 
-### Callbacks Object
+## Utilities
 
-```javascript
-{  
-  onStart: (tour) => {},           // Called when tour starts  
-  onStep: (step, index, tour) => {}, // Called on each step  
-  onNext: (step, index, tour) => {}, // Called when going to next step  
-  onPrev: (step, index, tour) => {}, // Called when going to previous step  
-  onFinish: (tour) => {},          // Called when tour completes  
-  onClose: (tour) => {},           // Called when tour is closed  
-  onDestroy: (tour) => {},         // Called when tour is destroyed  
-    
-  // Step-specific callbacks  
-  beforeStep: (step, index, tour) => {}, // Before showing step  
-  afterStep: (step, index, tour) => {},  // After showing step  
-    
-  // Validation callbacks  
-  canNext: (step, index, tour) => true,  // Return false to prevent next  
-  canPrev: (step, index, tour) => true,  // Return false to prevent prev  
-  canClose: (tour) => true               // Return false to prevent close  
-}  
+The library includes several utility functions (internal use, but exported):
+
+### `easeInOut(t: number): number`
+
+Easing function for animations.
+
+### `throttle<T>(func: T, limit: number)`
+
+Throttle function execution.
+
+### `adjustColor(color: string, amount: number): string`
+
+Adjust color brightness.
+
+### `scrollToElement(element, offset, duration, callback)`
+
+Smooth scroll to element.
+
+## TypeScript Usage Examples
+
+### Basic TypeScript Setup
+
+```typescript
+import { Walkthrough, WalkthroughOptions, WalkthroughStep } from '@walkthroughjs/core';
+
+const steps: WalkthroughStep[] = [
+  {
+    element: '#feature-1',
+    title: 'Feature 1',
+    text: 'Description of feature 1',
+    position: 'bottom'
+  },
+  {
+    element: document.querySelector('.feature-2') as HTMLElement,
+    title: 'Feature 2',
+    text: 'Description of feature 2',
+    position: 'top'
+  }
+];
+
+const options: WalkthroughOptions = {
+  progressColor: '#667eea',
+  showProgress: true,
+  keyboard: true
+};
+
+const tour = new Walkthrough(options);
+tour.configure({ steps });
+tour.start();
 ```
 
-## Step Objects
+### With Full Type Safety
 
-### Basic Step Object
+```typescript
+import type { 
+  WalkthroughConfig, 
+  WalkthroughCallbacks,
+  WalkthroughStep 
+} from '@walkthroughjs/core';
 
-```javascript
-{  
-  element: '.my-element',          // CSS selector or DOM element  
-  title: 'Step Title',             // Step title (optional)  
-  text: 'Step description',        // Step description (optional)  
-  position: 'bottom',              // Popup position  
-    
-  // Custom button text  
-  nextText: 'Continue',            // Custom next button text  
-  prevText: 'Go Back',             // Custom previous button text  
-    
-  // Step-specific options  
-  highlightPadding: 15,            // Override global padding  
-  showButtons: true,               // Show/hide buttons for this step  
-  allowClose: true,                // Allow closing on this step  
-    
-  // Custom data  
-  data: {                          // Custom data for callbacks  
-    category: 'onboarding',  
-    importance: 'high'  
-  }  
-}  
+const callbacks: WalkthroughCallbacks = {
+  onStart: () => console.log('Started'),
+  onStep: (step: WalkthroughStep, index: number) => {
+    console.log(`Step ${index}: ${step.title}`);
+  },
+  onFinish: () => console.log('Finished')
+};
+
+const config: WalkthroughConfig = {
+  steps: [
+    { element: '.step-1', title: 'Step 1' }
+  ],
+  options: {
+    progressColor: '#4CAF50'
+  },
+  callbacks
+};
 ```
 
-### Advanced Step Properties
+## Default Values
 
-```javascript
-{  
-  // Element targeting  
-  element: '#my-id',               // By ID  
-  element: '.my-class',            // By class  
-  element: document.querySelector('.my-element'), // DOM element  
-  element: () => document.querySelector('.dynamic'), // Function  
-    
-  // Conditional steps  
-  condition: () => true,           // Only show if function returns true  
-    
-  // Custom positioning  
-  position: {  
-    my: 'top center',              // Popup anchor point  
-    at: 'bottom center',           // Target anchor point  
-    offset: '0 10'                 // X Y offset  
-  },  
-    
-  // Wait conditions  
-  waitFor: '.async-element',       // Wait for element to exist  
-  waitTimeout: 5000,               // Timeout for wait condition  
-    
-  // Actions  
-  beforeShow: (step, tour) => {},  // Before showing this step  
-  afterShow: (step, tour) => {},   // After showing this step  
-  onNext: (step, tour) => {},      // When leaving this step  
-    
-  // Validation  
-  validate: () => true,            // Validate before proceeding  
-  validationMessage: 'Please complete this field'  
-}  
+All options have sensible defaults:
+
+```typescript
+{
+  overlayColor: 'rgba(0, 0, 0, 0.5)',
+  highlightPadding: 10,
+  animationDuration: 300,
+  scrollDuration: 500,
+  scrollOffset: 100,
+  zIndex: 99999,
+  popupWidth: 380,
+  popupOffset: 15,
+  popupClass: 'wt-popup',
+  showProgress: true,
+  progressColor: '#4CAF50',
+  showButtons: true,
+  showSkip: true,
+  skipText: 'Skip',
+  prevText: '← Previous',
+  nextText: 'Next →',
+  finishText: 'Finish',
+  keyboard: true,
+  escapeToExit: true,
+  arrowNavigation: true,
+  cookieName: 'walkthrough_progress',
+  cookieExpiry: 30,
+  rememberProgress: false,
+  closeOnOverlay: true,
+  autoStart: false,
+  startDelay: 0,
+  attributePrefix: 'wt',
+  stepAttribute: 'step',
+  titleAttribute: 'title',
+  textAttribute: 'text',
+  positionAttribute: 'position'
+}
 ```
 
-## Template Functions
-
-### Popup Template
-
-```javascript
-templates: {  
-  popup: (step, index, total, tour) => {  
-    return `  
-      <div class="walkthrough-popup">  
-        <div class="walkthrough-header">  
-          <h3>${step.title || `Step ${index + 1}`}</h3>  
-          <button class="walkthrough-close" onclick="tour.close()">×</button>  
-        </div>  
-        <div class="walkthrough-body">  
-          <p>${step.text || ''}</p>  
-        </div>  
-        <div class="walkthrough-footer">  
-          <div class="walkthrough-progress">  
-            ${index + 1} of ${total}  
-          </div>  
-          <div class="walkthrough-buttons">  
-            ${index > 0 ? `<button onclick="tour.prev()">Previous</button>` : ''}  
-            <button onclick="tour.${index === total - 1 ? 'finish' : 'next'}()">  
-              ${index === total - 1 ? 'Finish' : 'Next'}  
-            </button>  
-          </div>  
-        </div>  
-      </div>  
-    `;  
-  }  
-}  
-```
-
-### Progress Template
-
-```javascript
-templates: {  
-  progress: (current, total, tour) => {  
-    const percentage = (current / total) * 100;  
-    return `  
-      <div class="walkthrough-progress-bar">  
-        <div class="walkthrough-progress-fill" style="width: ${percentage}%"></div>  
-        <span class="walkthrough-progress-text">${current} / ${total}</span>  
-      </div>  
-    `;  
-  }  
-}  
-```
-
-## Instance Methods
-
-### Navigation Methods
-
-```javascript
-// Basic navigation  
-tour.start()                     // Start the walkthrough  
-tour.next()                      // Go to next step  
-tour.prev()                      // Go to previous step  
-tour.goTo(index)                 // Jump to specific step (0-based)  
-tour.finish()                    // Complete the walkthrough  
-tour.close()                     // Close without completing  
-tour.destroy()                   // Clean up and remove  
-  
-// Advanced navigation  
-tour.restart()                   // Restart from beginning  
-tour.pause()                     // Pause the walkthrough  
-tour.resume()                    // Resume paused walkthrough  
-```
-
-### State Methods
-
-```javascript
-// Current state  
-tour.getCurrentStep()            // Get current step object  
-tour.getCurrentIndex()           // Get current step index (0-based)  
-tour.getTotalSteps()             // Get total number of steps  
-tour.getProgress()               // Get progress percentage (0-100)  
-  
-// Status checks  
-tour.isActive()                  // Check if walkthrough is running  
-tour.isPaused()                  // Check if walkthrough is paused  
-tour.isFinished()                // Check if walkthrough completed  
-tour.canNext()                   // Check if can go to next step  
-tour.canPrev()                   // Check if can go to previous step  
-```
-
-### Configuration Methods
-
-```javascript
-// Update options  
-tour.setOptions(options)         // Update configuration options  
-tour.getOptions()                // Get current options  
-  
-// Step management  
-tour.addStep(step, index?)       // Add step at index (default: end)  
-tour.removeStep(index)           // Remove step at index  
-tour.updateStep(index, step)     // Update step at index  
-tour.getStep(index)              // Get step at index  
-```
-
-### Event Methods
-
-```javascript
-// Event listeners  
-tour.on(event, callback)         // Add event listener  
-tour.off(event, callback?)       // Remove event listener  
-tour.emit(event, ...args)        // Emit custom event  
-  
-// Available events  
-tour.on('start', (tour) => {})  
-tour.on('step', (step, index) => {})  
-tour.on('next', (step, index) => {})  
-tour.on('prev', (step, index) => {})  
-tour.on('finish', (tour) => {})  
-tour.on('close', (tour) => {})  
-```
-
-## Utility Methods
-
-### Element Utilities
-
-```javascript
-// Element helpers  
-walkthrough.utils.getElement(selector)     // Get DOM element  
-walkthrough.utils.isVisible(element)       // Check if element visible  
-walkthrough.utils.scrollToElement(element) // Scroll element into view  
-walkthrough.utils.getElementPosition(element) // Get element position  
-```
-
-### Storage Utilities
-
-```javascript
-// Progress storage  
-walkthrough.storage.save(key, data)       // Save to localStorage  
-walkthrough.storage.load(key)             // Load from localStorage  
-walkthrough.storage.remove(key)           // Remove from localStorage  
-walkthrough.storage.clear()               // Clear all walkthrough data  
-```
-
-### Animation Utilities
-
-```javascript
-// Animation helpers  
-walkthrough.animate.fadeIn(element, duration)  
-walkthrough.animate.fadeOut(element, duration)  
-walkthrough.animate.slideIn(element, direction, duration)  
-walkthrough.animate.slideOut(element, direction, duration)  
-```
-
-## Error Handling
-
-```javascript
-try {  
-  const tour = walkthrough.fromJSON(config);  
-  tour.start();  
-} catch (error) {  
-  if (error instanceof walkthrough.WalkthroughError) {  
-    console.error('Walkthrough error:', error.message);  
-  } else {  
-    console.error('Unexpected error:', error);  
-  }  
-}  
-  
-// Error types  
-walkthrough.WalkthroughError         // Base error class  
-walkthrough.ConfigurationError       // Configuration issues  
-walkthrough.ElementNotFoundError     // Target element not found  
-walkthrough.ValidationError          // Step validation failed 
-```

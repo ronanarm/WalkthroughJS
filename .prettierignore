@@ -1,0 +1,7 @@
+node_modules
+dist
+coverage
+*.min.js
+*.log
+.DS_Store
+
